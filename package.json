@@ -1,0 +1,27 @@
+{
+  "name": "votingpool-blockchain-front",
+  "version": "0.1.0",
+  "description": "Voting Pool Using BlockChain Technology.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.13.3"
+  },
+  "engines": {
+    "node": "4.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/raymundosaraiva/votingpool-blockchain-front"
+  },
+  "keywords": [
+    "node",
+    "blockchain",
+    "express"
+  ],
+  "author": "Raymundo Saraiva",
+  "contributors": [],
+  "license": "MIT"
+}
