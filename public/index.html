@@ -12,9 +12,15 @@
         <a class="right item">Sobre</a>
     </div><br><br>
 		<h1 class="ui centered aligned header">Em quem você vota para presidente do Brasil em 2018?</h1>
-    <div class="ui stackable four column grid doubling container segment row link cards">
+		
+		<div class="ui centered aligned header blue" id="msg" style="display:none">
+			<br>
+			<h2><b></b></h2>
+		</div>
+		
+    <div class="ui stackable four column grid doubling container segment row link cards" id="candidates" style="display:none">
         <div class="column">
-            <div class="ui centered card">
+            <div class="ui centered card" data-id="1">
                 <div class="image dimmable">
                     <div class="ui yellow ribbon label">
                         <i class="star icon"></i> PDT
@@ -29,7 +35,7 @@
                     <img src="img/ciro-gomes.jpg">
                 </div>
                 <div class="content">
-                    <a class="header">CIRO GOMES</a>
+                    <a class="header name">CIRO GOMES</a>
                     <div class="meta">
                         <span class="date">06/11/1957</span>
                     </div>
@@ -45,7 +51,7 @@
             </div>
         </div>
         <div class="column">
-            <div class="ui centered card">
+            <div class="ui centered card" data-id="2">
                 <div class="image">
                     <div class="ui black ribbon label">
                         <i class="star icon"></i> PSL
@@ -53,7 +59,7 @@
                     <img src="img/jair-bolsonaro.jpg">
                 </div>
                 <div class="content">
-                    <a class="header">JAIR BOLSONARO</a>
+                    <a class="header name">JAIR BOLSONARO</a>
                     <div class="meta">
                         <span class="date">21/03/1955</span>
                     </div>
@@ -69,7 +75,7 @@
             </div>
         </div>
         <div class="column">
-            <div class="ui centered card">
+            <div class="ui centered card" data-id="3">
                 <div class="image">
                     <div class="ui blue ribbon label">
                         <i class="star icon"></i> NOVO
@@ -77,7 +83,7 @@
                     <img src="img/joao-amoedo.jpg">
                 </div>
                 <div class="content">
-                    <a class="header">JOÃO AMOEDO</a>
+                    <a class="header name">JOÃO AMOEDO</a>
                     <div class="meta">
                         <span class="date">22/10/1962</span>
                     </div>
@@ -93,7 +99,7 @@
             </div>
         </div>
         <div class="column">
-            <div class="ui centered card">
+            <div class="ui centered card" data-id="4">
                 <div class="image">
                     <div class="ui green ribbon label">
                         <i class="star icon"></i> REDE
@@ -101,7 +107,7 @@
                     <img src="img/marina-silva.jpg">
                 </div>
                 <div class="content">
-                    <a class="header">MARINA SILVA</a>
+                    <a class="header name">MARINA SILVA</a>
                     <div class="meta">
                         <span class="date">08/02/1958</span>
                     </div>
@@ -118,8 +124,8 @@
         </div>
     </div>
 		<br><br><br><br>
-		<div class="ui segment grid container">
-            <h1 class="ui centered aligned header row">Resultado</h1>
+		<div class="ui segment grid container" id="result"  style="display:none">
+            <h1 class="ui centered aligned header row">Resultado Atual</h1>
 			 <div class="ui ordered horizontal center aligned list sixteen wide column">
               <div class="item">
                 <img class="ui avatar image" src="img/geraldo-alckmin.jpg">
@@ -157,17 +163,17 @@
         
     <div class="ui basic test modal">
         <div>
-           <img class="ui medium centered circular image" src="img/joao-amoedo.jpg">
+           <img class="ui medium centered circular image" id="modalImg" src="">
         </div>
         <div class="ui center aligned header">
-          <h1>Votar em João Amoedo?</h1>
+          <h1>Você vota em <b id="modalName"></b>?</h1>
         </div>
         <div class="actions" style="text-align:center;">
           <div class="massive ui red basic cancel inverted button">
             <i class="remove icon"></i>
             Cancela
           </div>
-          <div class="massive ui green ok inverted button">
+          <div class="massive ui green ok inverted button" id="voteBtn">
             <i class="checkmark icon"></i>
             Confirma
           </div>
@@ -176,30 +182,68 @@
 
 <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
 <script src="semantic/semantic.min.js" type="text/javascript"></script>
-<script>  
-    $('#example1').progress();
-    
+		
+		
+<script> 
+var ipGlobal = null;
+
+$.getJSON('https://api.ipify.org?format=jsonp&callback=?', function(data) {
+	ipGlobal = data.ip;
+	console.log(".:: Using IP: "+data.ip+" ::.");
+	$.ajax({
+		url: '/checkip/'+data.ip,
+		complete: function(data) {
+			if(data.responseText){
+				$("#result").css('display','block');
+				$("#msg").css('display','block');
+				$("#msg b").html("Um voto já foi efetuado com esse IP em: "+data.responseText);
+			} else{
+				$("#candidates").css('display','flex');
+				console.log("Apto a Votar!");
+			}
+		}
+	});
+});
+
+$(".card").click(function(){
+	var id = $(this).attr("data-id");
+	var img = $(this).find('img').attr('src');
+	var name = $(this).find('.name').html();
+	$("#modalImg").attr('src', img);
+	$("#modalName").html(name);
+	$('#voteBtn').attr("data-id", id);
+	//Open modal
+	$('.ui.basic.test.modal')
+			.modal({
+				blurring: true,
+				closable  : true,
+				onDeny    : function(){
+					console.log("Cancelou!");;
+				},
+				onApprove : function() {
+					 console.log("Votou!");
+				}
+			}).modal('show');
+});
+
+$("#voteBtn").click(function(){
+	var id = $(this).attr("data-id");
+	$.ajax({
+		url: '/setip/'+ipGlobal,
+		complete: function(data) {
+			$("#candidates").css('display','none');
+			$("#result").css('display','block');
+		}
+	});	
+});
+
+
 $.ajax({
   url: '/candidates',
   complete: function(data) {
     console.log(data.responseJSON.id.name);
   }
 });
-    
-    $(".card").click(function(){
-        console.log("CLICK!");
-		  $('.ui.basic.test.modal')
-          .modal({
-            blurring: true,
-            closable  : true,
-            onDeny    : function(){
-              console.log("Cancelou!");;
-            },
-            onApprove : function() {
-               console.log("Votou!");
-            }
-          }).modal('show');
-	});
 
 </script>
 		

@@ -23,19 +23,49 @@ admin.initializeApp({
 
 // As an admin, the app has access to read and write all data, regardless of Security Rules
 var db = admin.database();
-var ref = db.ref("candidates");
-
-app.get('/candidates', function(req, res, next) {
-    ref.once("value", function(snapshot) {
-        res.json(snapshot.val());
-    });  
-});
+var candidates = db.ref("candidates");
+var ips = db.ref("ips");
 
 app.use('/semantic', express.static('public/semantic/dist'));
 app.use('/img', express.static('public/img'));
 
+// BEGIN ROUTES 
+
 app.get('/', function(req, res) {
     res.sendFile(path.join(__dirname + '/public/index.html'));
+		console.log("Sending index.html");
 });
+
+app.get('/candidates', function(req, res, next) {
+		console.log("Route : /candidates");
+    candidates.once("value", function(snapshot) {
+        res.json(snapshot.val());
+    });  
+});
+
+app.get('/checkip/:ip', function(req, res, next) {
+	console.log("Route : /checkip/:ip");
+	var result = null;
+    ips.once("value", function(snapshot) {
+			snapshot.forEach(function(ref) {
+				console.log(ref.val().ip);
+				if(ref.val().ip == req.params.ip) result = ref.val().date;
+			});
+     	res.send(result);
+    });  
+});
+
+app.get('/setip/:ip', function(req, res, next) {
+	console.log("Route : /setip/:ip");
+	var date = new Date().toLocaleString();
+    ips.push().set({
+			ip: req.params.ip,
+			date: date
+		});
+	res.send(date);
+});
+
+// END ROUTES
+console.warn("INFO: Serving Voting Pool Application on port: "+port);
 
 app.listen(port);
