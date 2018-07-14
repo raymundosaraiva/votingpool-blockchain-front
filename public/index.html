@@ -83,38 +83,6 @@
                 </div>
             </div>
         </div>
-		
-		<div class="column">
-            <div class="ui centered card" data-id="1">
-                <div class="image dimmable">
-                    <div class="ui blue ribbon label">
-                        <i class="star icon"></i> PRB
-                    </div>
-                    <div class="ui blurring inverted dimmer transition hidden">
-                        <div class="content">
-                          <div class="center">
-                            <div class="ui teal button">Add Friend</div>
-                          </div>
-                        </div>
-                    </div>
-                    <img src="img/flavio-rocha.jpg">
-                </div>
-                <div class="content">
-                    <a class="header name">FLÁVIO ROCHA</a>
-                    <div class="meta">
-                        <span class="date">14/02/1958</span>
-                    </div>
-                    <div class="description">
-                      Nascido no Recife (PE), Flávio Gurgel Rocha é um empresário brasileiro. Atualmente exerce a função de CEO do Grupo Guararapes, que integra a Rede de Lojas Riachuelo, sendo um dos 15 maiores empregadores do país.
-                    </div>
-                </div>
-                <div class="extra content">
-                    <a><i class="user icon"></i>
-                        Empresário.
-                    </a>
-                </div>
-            </div>
-        </div>	
 
 		<div class="column">
             <div class="ui centered card" data-id="1">
@@ -325,6 +293,7 @@ var ipGlobal = null;
 
 $.getJSON('https://api.ipify.org?format=jsonp&callback=?', function(data) {
 	ipGlobal = data.ip;
+	
 	console.log(".:: Using IP: "+data.ip+" ::.");
 	$.ajax({
 		url: '/checkip/'+data.ip,
@@ -339,6 +308,7 @@ $.getJSON('https://api.ipify.org?format=jsonp&callback=?', function(data) {
 			}
 		}
 	});
+	
 });
 
 $(".card").click(function(){
